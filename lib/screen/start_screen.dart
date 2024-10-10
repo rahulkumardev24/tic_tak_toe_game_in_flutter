@@ -66,12 +66,12 @@ class _StartScreenState extends State<StartScreen> {
                           borderSide: const BorderSide(
                               width: 2, color: Colors.greenAccent)),
                       label: const Text(
-                        "Player First",
+                        "Enter player first name ",
                         style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                             fontFamily: "myFonts",
-                            color: Colors.deepPurple),
+                            color: Colors.black45),
                       )),
                   style: const TextStyle(fontSize: 30, fontFamily: "myBoxNew"),
                 ),
@@ -100,12 +100,12 @@ class _StartScreenState extends State<StartScreen> {
                           borderSide: const BorderSide(
                               width: 2, color: Colors.greenAccent)),
                       label: const Text(
-                        "Player Second",
+                        "Enter player second name ",
                         style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                             fontFamily: "myFonts",
-                            color: Colors.deepPurple),
+                            color: Colors.black45),
                       )),
                   style: const TextStyle(fontSize: 30, fontFamily: "myBoxNew"),
                 ),
@@ -128,7 +128,7 @@ class _StartScreenState extends State<StartScreen> {
                         ? "Player 2"
                         : player2Controller.text;
 
-                    Navigator.of(context).push(_createRoute(HomeScreen(
+                    Navigator.of(context).pushReplacement(_createRoute(HomeScreen(
                       player1,
                       player2,
                     )));
