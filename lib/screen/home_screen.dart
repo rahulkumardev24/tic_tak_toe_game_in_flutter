@@ -1,534 +1,351 @@
 import 'dart:async';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:tic_tak_toe/colors.dart';
 
-class HomeScreen extends StatefulWidget{
+class HomeScreen extends StatefulWidget {
+  String playerFirst;
+  String playerSecond;
 
-  var playerFirstResiver ;
-  var playerSecondResiver ;
-
-  HomeScreen(this.playerFirstResiver , this.playerSecondResiver) ;
+  HomeScreen(this.playerFirst, this.playerSecond, {super.key});
 
   @override
-  State<StatefulWidget> createState() => _HomeScreenState() ;
+  State<StatefulWidget> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
-  bool oTurn = true ;
-  List<String> displayOX = ['','' ,'','','','','','',''] ;
-  String resultDeclaration = "" ;
-  int oScore = 0 ;
-  int xScore = 0 ;
-  int filledBoxes = 0 ;
-  bool winnerFound = false ;
-
+  bool oTurn = true;
+  bool gameOver = false;
+  List<String> displayOX = ['', '', '', '', '', '', '', '', ''];
+  String resultDeclaration = "";
+  int oScore = 0;
+  int xScore = 0;
+  int filledBoxes = 0;
+  bool winnerFound = false;
 
   List<int> matchColor = [];
-  Color first = Colors.yellow ;
-  Color second = Colors.greenAccent ;
+  Color first = Colors.yellow;
+  Color second = Colors.greenAccent;
 
+  bool isBlinking = false; // Variable to control blinking effect
 
   @override
+  MediaQueryData? mqData;
+  @override
   Widget build(BuildContext context) {
+    mqData = MediaQuery.of(context);
     return Scaffold(
-
+      /// ..................body................................//
       body: Container(
         width: double.infinity,
-          height: double.infinity,
-          color: spColorTTT,
-
+        height: double.infinity,
+        color: spColorTTT,
         child: Column(
-          children: [
-///////////////////////////// PART 1 ////////////////////// DIVIDE ///////////
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+          const SizedBox(
+            height: 50,
+          ),
 
-          SizedBox(height: 15,),
-            Expanded(
-              flex: 1,
-                child:Row(
-                  children: [
-                    Expanded(
-                        child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-
-                        Container(
-                            height: 50 ,
-                            width: 50 ,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
-                                color: Colors.greenAccent
-                            ),
-                            child: Center(
-                                child: Text("O", style: TextStyle(fontWeight: FontWeight.bold , fontSize: 30 , fontFamily: "myBoxNew"),
-                                )
-                            )
-                        ),
-
-
-                        Container(
-                           height: 50 ,
-                          width: 220 ,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: Colors.greenAccent , width: 1),
-                            boxShadow: [BoxShadow(color:  Colors.greenAccent , blurRadius: 10)],
-                            color: Colors.white
-                          ),
-                            child: Center(
-                                child: Text(widget.playerFirstResiver , style: TextStyle(fontWeight: FontWeight.bold , fontSize: 30 , fontFamily: "myBox"),
-                                )
-                            )
-                        ),
-
-                        Container(
-                            height: 50 ,
-                            width: 50 ,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: Colors.greenAccent , width: 1),
-                                boxShadow: [BoxShadow(color:  spBox , blurRadius: 10)],
-                                color: Colors.white
-                            ),
-                            child: Center(
-                                child: Text(oScore.toString()  , style: TextStyle(fontWeight: FontWeight.bold , fontSize: 30 , fontFamily: "myBox"),
-                                )
-                            )
-                        )
-
-
+          /// player 1 part
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Container(
+                  height: 50,
+                  width: 50,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: Colors.greenAccent),
+                  child: const Center(
+                      child: Text(
+                    "O",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 30,
+                        fontFamily: "myBoxNew"),
+                  ))),
+              Container(
+                  height: 50,
+                  width: 220,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Colors.greenAccent, width: 1),
+                      boxShadow: const [
+                        BoxShadow(color: Colors.greenAccent, blurRadius: 10)
                       ],
-                    )) ,
-                  ],
-                )
-        ) ,
+                      color:
+                          oTurn ? Colors.orangeAccent.shade200 : Colors.white),
+                  child: Center(
+                      child: Text(
+                    widget.playerFirst,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 30,
+                        fontFamily: "myBoxNew"),
+                  ))),
+              Container(
+                  height: 50,
+                  width: 50,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.greenAccent, width: 1),
+                      boxShadow: const [
+                        BoxShadow(color: spBox, blurRadius: 10)
+                      ],
+                      color: Colors.white),
+                  child: Center(
+                      child: Text(
+                    oScore.toString(),
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 30,
+                        fontFamily: "myBox"),
+                  ))),
+            ],
+          ),
 
-      ///////////////////  Box //////////////////  PART 2 ///////////////////////////
-            Expanded(
-              flex: 3,
-                child:GridView.builder(
-                  padding:EdgeInsets.symmetric(horizontal:10 , vertical: 10 ) ,
-                  itemCount: 9,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3 ,
-                      crossAxisSpacing: 10 ,
-                    mainAxisSpacing: 10
-                  ),
-                  itemBuilder: (BuildContext context, int index) {
+          SizedBox(
+            height: mqData!.size.height * 0.05,
+          ),
 
-                    //////////// ON TAP ///////////
-                    return GestureDetector(onTap: () {
-                      _tapped(index);
-
-                    },
-
-
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: matchColor.contains(index) ? first  : second,
-
-                      borderRadius: BorderRadius.circular(12) ,
-                    ),
-                      child: Center(
-                        child: Text(displayOX[index],
-                          style: TextStyle(fontSize: 60 ,
-
-                              fontWeight: FontWeight.w800 , )
-
-                        ),
-                      ),
-
-
-                    ),
-                    ) ;
+          /// ............box......................//
+          Expanded(
+            child: GridView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              itemCount: 9,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3, crossAxisSpacing: 10, mainAxisSpacing: 10),
+              itemBuilder: (BuildContext context, int index) {
+                return GestureDetector(
+                  onTap: () {
+                    _tapped(index);
                   },
-                )
-            ),
-
-
-            ////////////////////////// PART 3 ///////////////// DIVIDE /////////////////////
-
-            Expanded(
-              flex: 2,
-                child: Column(
-                  children: [
-
-
-                    Expanded(
-                        flex: 1,
-                        child: Container(
-                          width: 250,
-                            height: 50,
-                            decoration: BoxDecoration(
-                              color: appResult ,
-                              borderRadius: BorderRadius.circular(12)
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: matchColor.contains(index) ? first : second,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Center(
+                      child: displayOX[index] == ""
+                          ? null
+                          : Image.asset(
+                              displayOX[index] == "X"
+                                  ? 'assets/images/xicon.webp'
+                                  : 'assets/images/0icon.png',
+                              width: 60,
+                              height: 60,
                             ),
-                            child: Center(child: Text(resultDeclaration , style: TextStyle( color: Colors.white , fontSize: 20 , fontFamily: "myBoxNew"),)))),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
 
-                    Expanded(
-                      flex:2,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Container(
-                            height: 70,
-                            width: 70,
-                            child: FloatingActionButton(onPressed: (){
-                              setState(() {
-                               _clearBoard() ;
-                              });
-                            } , child: Text("Clear" , style: TextStyle(fontFamily: "myBox" , fontSize: 20),),),
-                          ) ,
-                          Container(
-                            height: 70,
-                            width: 70,
-                            child: FloatingActionButton(onPressed: (){
+          /// operation part
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                SizedBox(
+                  height: 70,
+                  width: 70,
+                  child: FloatingActionButton(
+                    onPressed: () {
+                      setState(() {
+                        _clearBoard();
+                      });
+                    },
+                    child: const Text(
+                      "Clear",
+                      style: TextStyle(fontFamily: "myBox", fontSize: 20),
+                    ),
+                  ),
+                ),
+                Container(
+                    width: mqData!.size.width * 0.5,
+                    height: 70,
+                    decoration: BoxDecoration(
+                        color: Colors.blue.shade100.withOpacity(0.4),
+                        borderRadius: BorderRadius.circular(12)),
+                    child: Center(
+                        child: Text(
+                      resultDeclaration,
+                      style: const TextStyle(
+                          color: Colors.blueAccent,
+                          fontSize: 20,
+                          fontFamily: "myBoxNew"),
+                    ))),
+                SizedBox(
+                  height: 70,
+                  width: 70,
+                  child: FloatingActionButton(
+                    onPressed: () {
+                      setState(() {
+                        _reStart();
+                      });
+                    },
+                    child: const Icon(
+                      Icons.restart_alt_outlined,
+                      size: 30,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
 
-                            } , child: Text("Start ", style: TextStyle(fontFamily: "myBox" , fontSize: 20),),),
-                          ) ,
-                          Container(
-                            height: 70,
-                            width: 70,
-                            child: FloatingActionButton(onPressed: (){
-                              setState(() {
-                                _reStart() ;
-                              });
+          SizedBox(
+            height: mqData!.size.height * 0.05,
+          ),
 
-                            } , child:Icon(Icons.restart_alt_outlined , size: 30, ),),
-                          ) ,
-
+          /// player 2 part
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Container(
+                    height: 50,
+                    width: 50,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.greenAccent, width: 1),
+                        boxShadow: const [
+                          BoxShadow(color: spBox, blurRadius: 10)
                         ],
-
-
-                      ),
-                    ),
-
-                    Expanded(
-                      flex: 3,
-                      child:Expanded(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Container(
-                                  height: 50 ,
-                                  width: 50 ,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8),
-                                      border: Border.all(color: Colors.greenAccent , width: 1),
-                                      boxShadow: [BoxShadow(color:  spBox , blurRadius: 10)],
-                                      color: Colors.white
-                                  ),
-                                  child: Center(
-                                      child: Text(xScore.toString()  , style: TextStyle(fontWeight: FontWeight.bold , fontSize: 30 , fontFamily: "myBox"),
-                                      )
-                                  )
-                              ) ,
-
-
-
-                              Container(
-                                  height: 50 ,
-                                  width: 220 ,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(color: Colors.greenAccent , width: 1),
-                                      boxShadow: [BoxShadow(color:  Colors.greenAccent , blurRadius: 10)],
-                                      color: Colors.white
-                                  ),
-                                  child: Center(
-                                      child: Text(widget.playerSecondResiver , style: TextStyle(fontWeight: FontWeight.bold , fontSize: 30 , fontFamily: "myBox"),
-                                      )
-                                  )
-                              ),
-
-
-
-                              Container(
-                                  height: 50 ,
-                                  width: 50 ,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8),
-                                      color: Colors.greenAccent
-                                  ),
-                                  child: Center(
-                                      child: Text("X", style: TextStyle( fontSize: 30 , fontFamily: "myBoxNew"),
-                                      )
-                                  )
-                              ),
-
-
-
-                            ],
-                          )
-                      )
-                    ),
-
-                    SizedBox(height: 40,)
-                  ],
-                )
-            )
-
-          ]
-        ),
-
-
+                        color: Colors.white),
+                    child: Center(
+                        child: Text(
+                      xScore.toString(),
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 30,
+                          fontFamily: "myBox"),
+                    ))),
+                Container(
+                    height: 50,
+                    width: 220,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: Colors.greenAccent, width: 1),
+                        boxShadow: const [
+                          BoxShadow(color: Colors.greenAccent, blurRadius: 10)
+                        ],
+                        color: oTurn
+                            ? Colors.white
+                            : Colors.orangeAccent.shade200),
+                    child: Center(
+                        child: Text(
+                      widget.playerSecond,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 30,
+                          fontFamily: "myBoxNew"),
+                    ))),
+                Container(
+                    height: 50,
+                    width: 50,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        color: Colors.greenAccent),
+                    child: const Center(
+                        child: Text(
+                      "X",
+                      style: TextStyle(fontSize: 30, fontFamily: "myBoxNew"),
+                    ))),
+              ],
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+        ]),
       ),
-    ) ;
+    );
   }
 
-
-
-
-  ///////////////////// Function ///////////////////////////////////
-void _tapped(int index) {
-  setState(() {
-    if (oTurn && displayOX[index] == "") {
-      displayOX[index] = "O";
-      filledBoxes++ ;
-
-    } else if (!oTurn && displayOX[index] == "") {
-      displayOX[index] = "X";
-      filledBoxes++;
-    }
-    oTurn = !oTurn; // here condition is false
-    _checkWinner();
-
-  });
-}
-
-    // here we create function to check the winner
-
-  void _checkWinner(){
-
-    // row 1 check
-    if(displayOX[0] == displayOX[1]  &&
-        displayOX[0] == displayOX[2] &&
-        displayOX[1] == displayOX[2] &&
-        displayOX[0] != "" ){setState(() {
-          resultDeclaration = "Player " + displayOX[0] + " Wins" ;
-          matchColor.addAll([0,1,2]);
-          _updateScore(displayOX[0]) ;
-
-        });
-
-    Future.delayed(Duration(seconds:1), () {
-      setState(() {
-        _clearBoard();
-        // first = Colors.greenAccent ;
-      });
-    });
-
-
-
-
-    }
-
-
-
-    // row 2 check
-    if(displayOX[3] == displayOX[4]  &&
-        displayOX[3] == displayOX[5] &&
-        displayOX[4] == displayOX[5] &&
-        displayOX[3] != "" ){setState(() {
-      resultDeclaration = "Player " + displayOX[3] + " Wins" ;
-      matchColor.addAll([3,4,5]);
-      _updateScore(displayOX[3]) ;
-
-    });
-
-    Future.delayed(Duration(seconds:1), () {
-      setState(() {
-        _clearBoard();
-        first = Colors.greenAccent ;
-      });
-    });
-
-
-    }
-
-
-    // row 3 check
-    if(displayOX[6] == displayOX[7]  &&
-        displayOX[6] == displayOX[8] &&
-        displayOX[7] == displayOX[8] &&
-        displayOX[6] != "" ){setState(() {
-      resultDeclaration = "Player " + displayOX[6] + " Wins" ;
-      matchColor.addAll([6,7,8]);
-      _updateScore(displayOX[6]) ;
-
-    });
-
-    Future.delayed(Duration(seconds:1), () {
-      setState(() {
-        _clearBoard();
-      });
-    });
-
-    }
-
-
-    // col 1 check
-    if(displayOX[0] == displayOX[3]  &&
-        displayOX[0] == displayOX[6] &&
-        displayOX[3] == displayOX[6] &&
-        displayOX[0] != "" )
-     {setState(() {
-      resultDeclaration = "Player " + displayOX[0] + " Wins" ;
-      matchColor.addAll([0,3,6]);
-      _updateScore(displayOX[0]) ;
-
-    });
-
-     Future.delayed(Duration(seconds:1), () {
-       setState(() {
-         _clearBoard();
-
-       });
-     });
-
-     }
-
-
-
-    // col 2 check
-    if(displayOX[1] == displayOX[4]  &&
-        displayOX[1] == displayOX[7] &&
-        displayOX[4] == displayOX[7] &&
-        displayOX[1] != "" ){setState(() {
-      resultDeclaration = "Player " + displayOX[1] + " Wins" ;
-      matchColor.addAll([1,4,7]);
-      _updateScore(displayOX[1]) ;
-
-    });
-
-    Future.delayed(Duration(seconds:1), () {
-      setState(() {
-        _clearBoard();
-
-      });
-    });
-
-    }
-
-    // col 3 check
-    if(displayOX[2] == displayOX[5]  &&
-        displayOX[2] == displayOX[8] &&
-        displayOX[5] == displayOX[8] &&
-        displayOX[2] != "" ){setState(() {
-      resultDeclaration = "Player " + displayOX[2] + " Wins" ;
-      matchColor.addAll([5,8,2]);
-      _updateScore(displayOX[2]) ;
-
-    });
-    Future.delayed(Duration(seconds: 2), () {
-      setState(() {
-        _clearBoard();
-      });
-    });
-
-    }
-
-    // dig 1 check
-    if (displayOX[0] == displayOX[4] &&
-        displayOX[0] == displayOX[8] &&
-        displayOX[4] == displayOX[8] &&
-        displayOX[0] != "") {
-      setState(() {
-        resultDeclaration = "Player " + displayOX[0] + " Wins";
-        matchColor.addAll([0, 4, 8]);
-        _updateScore(displayOX[0]);
-      });
-
-      Future.delayed(Duration(seconds:1), () {
-        setState(() {
-          _clearBoard();
-
-        });
-      });
-
-    }
-
-    // dig 2 check
-    if (displayOX[2] == displayOX[4] &&
-        displayOX[2] == displayOX[6] &&
-        displayOX[4] == displayOX[6] &&
-        displayOX[2] != "") {
-      setState(() {
-        resultDeclaration = "Player " + displayOX[2] + " Wins";
-        matchColor.addAll([6, 2, 4]);
-        _updateScore(displayOX[2]);
-      });
-
-      // Delay the board clearing after a win
-      Future.delayed(Duration(seconds: 2), () {
-        setState(() {
-          _clearBoard();
-        });
-      });
-      first = Colors.yellow ;
-    } else if (!winnerFound && filledBoxes == 9) {
-      setState(() {
-        resultDeclaration = "Game Draw";
-      });
-
-      // Delay the board clearing after a draw
-      Future.delayed(Duration(seconds: 2), () {
-        setState(() {
-          _clearBoard();
-        });
-      });
-    }
-
-
-  }
-
-  ////  Mark Update Function
- void _updateScore(String winner){
-    if(winner == "O"){
-      oScore++ ;
-    }else if(winner == "X"){
-      xScore++;
-    }
-    winnerFound= true ;
- }
-
- // Here we create function for clear
-
-void _clearBoard(){
+  /// ..................................FUNCTION ............................///
+  void _tapped(int index) {
     setState(() {
-      for(int i = 0 ; i < 9 ; i++ ){
-        displayOX[i] = "" ;
+      if (displayOX[index] == "" && !gameOver) {
+        displayOX[index] = oTurn ? "O" : "X";
+        filledBoxes++;
+        oTurn = !oTurn;
+        _checkWinner();
       }
-      resultDeclaration ="" ;
     });
-    filledBoxes = 0 ;
-}
+  }
 
-// here we create function for clear only board
+  void _checkWinner() {
+    List<List<int>> winningCombinations = [
+      [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
+      [0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
+      [0, 4, 8], [2, 4, 6] // diagonals
+    ];
 
-void _reStart(){
-  setState(() {
-    for(int i = 0 ; i < 9 ; i++ ){
-      displayOX[i] = "" ;
+    for (List<int> combo in winningCombinations) {
+      if (displayOX[combo[0]] != "" &&
+          displayOX[combo[0]] == displayOX[combo[1]] &&
+          displayOX[combo[0]] == displayOX[combo[2]]) {
+        setState(() {
+          resultDeclaration =
+              "${displayOX[combo[0]] == "O" ? widget.playerFirst : widget.playerSecond} Wins";
+          matchColor.addAll(combo);
+          _updateScore(displayOX[combo[0]]);
+          gameOver = true; // Game khatam hone par gameOver ko true set karo
+        });
+        Future.delayed(const Duration(seconds: 2), () {
+          setState(() {
+            _clearBoard();
+          });
+        });
+      }
     }
-    resultDeclaration ="" ;
-    oScore = 0 ;
-    xScore = 0 ;
-  });
 
+    // Check for draw
+    if (!gameOver && filledBoxes == 9) {
+      setState(() {
+        resultDeclaration = "It's a Draw";
+      });
+      Future.delayed(const Duration(seconds: 2), () {
+        setState(() {
+          _clearBoard();
+        });
+      });
+    }
+  }
+
+  void _updateScore(String winner) {
+    if (winner == "X") {
+      xScore++;
+    } else if (winner == "O") {
+      oScore++;
+    }
+  }
+
+  void _clearBoard() {
+    setState(() {
+      displayOX = ['', '', '', '', '', '', '', '', ''];
+      matchColor = [];
+      filledBoxes = 0;
+      gameOver = false; // Reset game over state
+      resultDeclaration = "";
+      isBlinking = false; // Reset blinking effect
+    });
+  }
+
+  void _reStart() {
+    setState(() {
+      xScore = 0;
+      oScore = 0;
+      _clearBoard();
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 }
-
-///////// Color change Function ///////
-void _colorChange(){
-
-
-}
-
-
-}
-
-
-
-
-
