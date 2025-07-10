@@ -50,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: spColorTTT,
+      backgroundColor: AppColors.primaryLight,
       body: SafeArea(
         child: Column(
           children: [

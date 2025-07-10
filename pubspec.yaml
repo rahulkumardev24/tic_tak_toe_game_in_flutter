@@ -84,15 +84,11 @@ flutter:
   # example:
   fonts:
 
-     - family: myFonts
+     - family: primary
        fonts:
          - asset: assets/fonts/Platypi-Regular.ttf
 
-     - family: myBox
-       fonts:
-        - asset: assets/fonts/Exo2-Regular.ttf
-
-     - family: myBoxNew
+     - family: secondary
        fonts:
        - asset: assets/fonts/Coiny-Regular.ttf
   #       - asset: fonts/Schyler-Italic.ttf

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:tic_tak_toe/colors.dart';
 import 'package:tic_tak_toe/screen/start_screen.dart';
+import 'package:tic_tak_toe/utils/custom_text_style.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -10,129 +11,97 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _scaleAnimation;
-  late Animation<double> _fadeAnimation;
-  late Animation<Color?> _colorAnimation;
-
+class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
 
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1500),
-    );
-
-    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: Curves.elasticOut,
-      ),
-    );
-
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: Curves.easeIn,
-      ),
-    );
-
-    _colorAnimation = ColorTween(
-      begin: Colors.blue.shade100,
-      end: spColorTTT,
-    ).animate(_controller);
-
-    _controller.forward();
-
-    Timer(const Duration(seconds: 3), () {
+    Timer(const Duration(seconds: 2), () {
       Navigator.pushReplacement(
-        context,
-        PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) => const StartScreen(),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return FadeTransition(
-              opacity: animation,
-              child: child,
-            );
-          },
-          transitionDuration: const Duration(milliseconds: 800),
-        ),
-      );
+          context, MaterialPageRoute(builder: (_) => StartScreen()));
     });
   }
 
   @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _controller,
-      builder: (context, child) {
-        return Scaffold(
-          body: Container(
-            width: double.infinity,
-            height: double.infinity,
-            color: _colorAnimation.value,
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ScaleTransition(
-                    scale: _scaleAnimation,
-                    child: FadeTransition(
-                      opacity: _fadeAnimation,
-                      child: Image.asset(
-                        "assets/images/tic-tac-toe.png",
-                        height: 200,
-                        width: 200,
-                        filterQuality: FilterQuality.high,
+    final size = MediaQuery.of(context).size;
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: AppColors.primaryLight,
+
+        /// --- BODY --- ///
+        body: Container(
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  colors: [AppColors.primaryLight, AppColors.primaryDark])),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      /// logo
+                      Container(
+                        height: size.height * 0.2,
+                        width: size.height * 0.2,
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border:
+                                Border.all(width: 2, color: AppColors.primary),
+                            image: DecorationImage(
+                                image:
+                                    AssetImage("assets/images/tic-tac-toe.png"),
+                                fit: BoxFit.cover)),
                       ),
-                    ),
+
+                      /// name
+                      Text("Tic Tac Toe",
+                          style: myTextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: size.width * 0.1,
+                              fontFamily: "secondary")),
+                      const SizedBox(height: 10),
+                    ],
                   ),
-                  const SizedBox(height: 20),
-                  FadeTransition(
-                    opacity: _fadeAnimation,
-                    child: Text(
-                      "Tic Tac Toe",
-                      style: TextStyle(
-                        fontSize: 36,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: "myBoxNew",
-                        color: appAppBar,
-                        shadows: [
-                          Shadow(
-                            color: Colors.black.withOpacity(0.3),
-                            blurRadius: 8,
-                            offset: const Offset(2, 2),
-                          ),
-                        ],
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text("Challenge Your Brain ",
+                          style: myTextStyle(
+                              fontSize: size.width * 0.05,
+                              fontColor: AppColors.textSecondary)),
+                      SizedBox(
+                        height: size.height * 0.02,
                       ),
-                    ),
+
+                      /// Liner Progress bar
+                      SizedBox(
+                          width: size.width * 0.8,
+                          child: LinearProgressIndicator(
+                            minHeight: size.height * 0.01,
+                            backgroundColor:
+                                AppColors.textSecondary.withAlpha(150),
+                            color: AppColors.textPrimary,
+                            borderRadius: BorderRadius.circular(20),
+                          )),
+                      SizedBox(
+                        height: size.height * 0.1,
+                      )
+                    ],
                   ),
-                  const SizedBox(height: 10),
-                  FadeTransition(
-                    opacity: _fadeAnimation,
-                    child: const Text(
-                      "Classic Strategy Game",
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.blueGrey,
-                        fontStyle: FontStyle.italic,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }
