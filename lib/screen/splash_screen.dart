@@ -1,7 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:tic_tak_toe/colors.dart';
+import 'package:tic_tak_toe/provider/them_provider.dart';
+import 'package:tic_tak_toe/screen/game_mode_selection_screen.dart';
 import 'package:tic_tak_toe/screen/start_screen.dart';
 import 'package:tic_tak_toe/utils/custom_text_style.dart';
 
@@ -19,7 +22,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
     Timer(const Duration(seconds: 2), () {
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (_) => StartScreen()));
+          context, MaterialPageRoute(builder: (_) => GameModeSelectionScreen()));
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     });
   }
@@ -27,9 +30,10 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final isDark = context.watch<ThemProvider>().isDark ;
     return SafeArea(
       child: Scaffold(
-        backgroundColor: AppColors.primaryLight,
+
 
         /// --- BODY --- ///
         body: Container(
