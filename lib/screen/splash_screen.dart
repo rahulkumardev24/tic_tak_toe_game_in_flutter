@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:tic_tak_toe/colors.dart';
 import 'package:tic_tak_toe/screen/start_screen.dart';
 import 'package:tic_tak_toe/utils/custom_text_style.dart';
@@ -19,6 +20,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Timer(const Duration(seconds: 2), () {
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (_) => StartScreen()));
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     });
   }
 

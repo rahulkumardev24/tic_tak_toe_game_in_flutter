@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:tic_tak_toe/colors.dart';
 import 'package:tic_tak_toe/screen/home_screen.dart';
+import 'package:tic_tak_toe/utils/custom_text_style.dart';
+import 'package:tic_tak_toe/widgets/my_text_button.dart';
+import 'package:velocity_x/velocity_x.dart';
 
 class StartScreen extends StatefulWidget {
   const StartScreen({super.key});
@@ -9,31 +12,13 @@ class StartScreen extends StatefulWidget {
   State<StatefulWidget> createState() => _StartScreenState();
 }
 
-class _StartScreenState extends State<StartScreen> with SingleTickerProviderStateMixin {
+class _StartScreenState extends State<StartScreen> {
   final player1Controller = TextEditingController();
   final player2Controller = TextEditingController();
-  late AnimationController _animationController;
-  late Animation<double> _animation;
-
-  @override
-  void initState() {
-    super.initState();
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1500),
-    );
-    _animation = Tween<double>(begin: 0.95, end: 1.05).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeInOut,
-      ),
-    );
-    _animationController.repeat(reverse: true);
-  }
+  late Size size;
 
   @override
   void dispose() {
-    _animationController.dispose();
     player1Controller.dispose();
     player2Controller.dispose();
     super.dispose();
@@ -41,81 +26,114 @@ class _StartScreenState extends State<StartScreen> with SingleTickerProviderStat
 
   @override
   Widget build(BuildContext context) {
+    size = MediaQuery.of(context).size;
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Colors.blue.shade50,
-              Colors.blue.shade100,
-            ],
+      /// --- Body --- ///
+      body: SingleChildScrollView(
+        child: Container(
+          height: size.height,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                AppColors.primary,
+                AppColors.primaryLight.withAlpha(100),
+              ],
+            ),
           ),
-        ),
-        child: SafeArea(
-          child: Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
+          child: SafeArea(
+            child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Game Title
-                  const Text(
+                  SizedBox(
+                    height: size.height * 0.05,
+                  ),
+
+                  /// Game Title with animated decoration
+                  Text(
                     "Tic Tac Toe",
-                    style: TextStyle(
-                      fontSize: 42,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blue,
-                      shadows: [
-                      Shadow(
-                      blurRadius: 4.0,
-                      color: Colors.black12,
-                      offset: Offset(2.0, 2.0),
-                      )],
+                    style: myTextStyle(
+                      fontFamily: "secondary",
+                      fontSize: size.width * 0.1,
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    "Enter player names to begin",
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.blueGrey,
-                    ),
-                  ),
-                  const SizedBox(height: 32),
+                  Text("Enter player names to begin",
+                      style: myTextStyle(
+                          fontSize: size.width * 0.05,
+                          fontColor: AppColors.textSecondary)),
+                  const SizedBox(height: 40),
 
-                  // Animated Game Logo
-                  ScaleTransition(
-                    scale: _animation,
-                    child: Image.asset(
-                      "assets/images/tic-tac-toe.png",
-                      height: 220,
-                      width: 220,
-                    ),
-                  ),
-                  const SizedBox(height: 32),
-
-                  // Player 1 Input
-                  _buildPlayerInput(
-                    controller: player1Controller,
-                    label: "Player 1 (O)",
-                    icon: Icons.person_outline,
-                    color: Colors.green,
-                  ),
-                  const SizedBox(height: 20),
-
-                  // Player 2 Input
-                  _buildPlayerInput(
-                    controller: player2Controller,
-                    label: "Player 2 (X)",
-                    icon: Icons.person_outline,
-                    color: Colors.orange,
+                  Image.asset(
+                    "assets/images/tic-tac-toe.png",
+                    height: size.width * 0.5,
+                    width: size.width * 0.5,
+                    fit: BoxFit.contain,
                   ),
                   const SizedBox(height: 40),
 
-                  // Start Game Button
-                  _buildStartButton(context),
+                  Expanded(
+                    flex: 1,
+                    child: VxArc(
+                      height: size.height * 0.03,
+                      arcType: VxArcType.convex,
+                      edge: VxEdge.top,
+                      child: Container(
+                        width: size.width,
+                        decoration: BoxDecoration(
+                            color:
+                                AppColors.textPrimary.withValues(alpha: 0.9)),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                height: size.height * 0.02,
+                              ),
+
+                              /// Player Input Section
+                              _buildPlayerInput(
+                                controller: player1Controller,
+                                labelColor: AppColors.oColor,
+                                label: "Player 1 (O)",
+                                hint: "Enter name for Player 1",
+                                icon: Icons.person,
+                                iconColor: AppColors.cardLight,
+                              ),
+                              const SizedBox(height: 20),
+                              _buildPlayerInput(
+                                controller: player2Controller,
+                                labelColor: AppColors.xColor,
+                                label: "Player 2 (X)",
+                                hint: "Enter name for Player 2",
+                                icon: Icons.person,
+                                iconColor: AppColors.cardLight,
+                              ),
+                              SizedBox(
+                                height: size.height * 0.05,
+                              ),
+                              MyTextButton(
+                                onTap: () {
+                                  final player1 = player1Controller.text.isEmpty
+                                      ? "Player 1"
+                                      : player1Controller.text;
+                                  final player2 = player2Controller.text.isEmpty
+                                      ? "Player 2"
+                                      : player2Controller.text;
+                                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>
+                                      HomeScreen(player1 , player2)));
+                                },
+                                backgroundColor: AppColors.card,
+                                btnText: "Game Start",
+                                fontWeight: FontWeight.bold,
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -128,112 +146,47 @@ class _StartScreenState extends State<StartScreen> with SingleTickerProviderStat
   Widget _buildPlayerInput({
     required TextEditingController controller,
     required String label,
+    required Color labelColor,
+    required String hint,
     required IconData icon,
-    required Color color,
+    required Color iconColor,
   }) {
-    return TextField(
-      controller: controller,
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: const TextStyle(color: Colors.blueGrey),
-        prefixIcon: Icon(icon, color: color),
-        filled: true,
-        fillColor: Colors.white,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: Text(
+            label,
+            style: myTextStyle(fontFamily: "secondary", fontColor: labelColor),
+          ),
         ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: color.withOpacity(0.5), width: 2),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: color, width: 2),
-        ),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 20,
-          vertical: 16,
-        ),
-      ),
-      style: const TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.w500,
-      ),
-    );
-  }
-
-  Widget _buildStartButton(BuildContext context) {
-    return Material(
-      elevation: 5,
-      borderRadius: BorderRadius.circular(12),
-      child: InkWell(
-        onTap: () {
-          final player1 = player1Controller.text.isEmpty
-              ? "Player 1"
-              : player1Controller.text;
-          final player2 = player2Controller.text.isEmpty
-              ? "Player 2"
-              : player2Controller.text;
-
-          Navigator.of(context).pushReplacement(
-            _createRoute(HomeScreen(player1, player2)),
-          );
-        },
-        borderRadius: BorderRadius.circular(12),
-        child: Ink(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(vertical: 16),
+        Container(
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.blue.shade400, Colors.blue.shade600],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
             borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.blue.withOpacity(0.3),
-                blurRadius: 8,
-                spreadRadius: 2,
-              ),
-            ],
           ),
-          child: const Center(
-            child: Text(
-              "START GAME",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-                letterSpacing: 1.2,
+          child: TextField(
+            controller: controller,
+            decoration: InputDecoration(
+              hintText: hint,
+              hintStyle: myTextStyle(
+                  fontSize: size.width * 0.04, fontColor: Colors.white54),
+              prefixIcon: Icon(icon, color: iconColor),
+              filled: true,
+              fillColor: Colors.white24,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 16,
               ),
             ),
+            style:myTextStyle(fontColor: Colors.white),
           ),
         ),
-      ),
+      ],
     );
   }
-}
-
-Route _createRoute(Widget child) {
-  return PageRouteBuilder(
-    pageBuilder: (context, animation, secondaryAnimation) => child,
-    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      const begin = Offset(0.0, 1.0);
-      const end = Offset.zero;
-      const curve = Curves.easeInOutQuart;
-
-      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-
-      return SlideTransition(
-        position: animation.drive(tween),
-        child: FadeTransition(
-          opacity: animation,
-          child: child,
-        ),
-      );
-    },
-    transitionDuration: const Duration(milliseconds: 600),
-  );
 }

@@ -9,4 +9,14 @@ class AppColors {
   /// text Color
   static const Color textPrimary = Color(0xff333446);
   static const Color textSecondary = Color(0xec3f444a);
+
+  /// card Color
+  static const Color card = Color(0xffFCEF91);
+  static const Color cardLight = Color(0xffFDFFB8);
+
+  /// game
+  static const Color oColor = Color(0xffff2647);
+  static const Color xColor = Color(0xff266bff);
+
+
 }
