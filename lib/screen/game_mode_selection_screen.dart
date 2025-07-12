@@ -135,7 +135,7 @@ class GameModeSelectionScreen extends StatelessWidget {
                 onTap: () => Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                        builder: (_) => AiGameScreen(playerName: "You"))))
+                        builder: (_) => AiGameScreen())))
             .animate()
             .fadeIn(delay: 400.ms)
             .slideX(begin: 0.2),

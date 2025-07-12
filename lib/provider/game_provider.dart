@@ -12,12 +12,12 @@ class GameProvider extends ChangeNotifier {
 
   bool showWinDialog = false;
 
-  String playerFirst = '';
-  String playerSecond = '';
+  String playerFirst = 'Player 1';
+  String playerSecond = 'Player 2';
 
   void setPlayers(String p1, String p2) {
-    playerFirst = p1;
-    playerSecond = p2;
+    playerFirst = p1.isNotEmpty ? p1 : 'Player 1';
+    playerSecond = p2.isNotEmpty ? p2 : 'Player 2';
     notifyListeners();
   }
 
@@ -48,7 +48,7 @@ class GameProvider extends ChangeNotifier {
       String c = displayOX[combo[2]];
       if (a != "" && a == b && a == c) {
         matchColor = combo;
-        resultDeclaration = "${a == "O" ? playerFirst : playerSecond} Wins!";
+        resultDeclaration = "${a == 'X' ? playerFirst : playerSecond} Wins!";
         _updateScore(a);
         gameOver = true;
         showWinDialog = true;

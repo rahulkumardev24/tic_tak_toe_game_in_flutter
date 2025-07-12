@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AiGameProvider extends ChangeNotifier {
-  List<String> displayOX = List.filled(9, '');
+  List<String> board = List.filled(9, '');
   bool playerTurn = true;
   bool gameOver = false;
   String resultMessage = '';
@@ -13,12 +13,13 @@ class AiGameProvider extends ChangeNotifier {
   String playerName = "You";
 
   void setPlayerName(String name) {
-    playerName = name;
+    playerName = name.isNotEmpty ? name : "You";
+    notifyListeners();
   }
 
   void makeMove(int index) {
-    if (displayOX[index] == "" && !gameOver && !showWinDialog && playerTurn) {
-      displayOX[index] = 'X';
+    if (board[index] == "" && !gameOver && !showWinDialog && playerTurn) {
+      board[index] = 'X';
       playerTurn = false;
       _checkWinner();
       notifyListeners();
@@ -36,7 +37,7 @@ class AiGameProvider extends ChangeNotifier {
     if (gameOver) return;
 
     int bestMove = _findBestMove();
-    displayOX[bestMove] = 'O';
+    board[bestMove] = 'O';
     playerTurn = true;
     aiThinking = false;
     _checkWinner();
@@ -45,40 +46,40 @@ class AiGameProvider extends ChangeNotifier {
 
   int _findBestMove() {
     for (int i = 0; i < 9; i++) {
-      if (displayOX[i] == '') {
-        displayOX[i] = 'O';
+      if (board[i] == '') {
+        board[i] = 'O';
         if (_isWinning('O')) {
-          displayOX[i] = '';
+          board[i] = '';
           return i;
         }
-        displayOX[i] = '';
+        board[i] = '';
       }
     }
 
     for (int i = 0; i < 9; i++) {
-      if (displayOX[i] == '') {
-        displayOX[i] = 'X';
+      if (board[i] == '') {
+        board[i] = 'X';
         if (_isWinning('X')) {
-          displayOX[i] = '';
+          board[i] = '';
           return i;
         }
-        displayOX[i] = '';
+        board[i] = '';
       }
     }
 
-    if (displayOX[4] == '') return 4;
+    if (board[4] == '') return 4;
 
     List<int> corners = [0, 2, 6, 8]..shuffle();
     for (int corner in corners) {
-      if (displayOX[corner] == '') return corner;
+      if (board[corner] == '') return corner;
     }
 
     List<int> edges = [1, 3, 5, 7]..shuffle();
     for (int edge in edges) {
-      if (displayOX[edge] == '') return edge;
+      if (board[edge] == '') return edge;
     }
 
-    return displayOX.indexWhere((e) => e == '');
+    return board.indexWhere((e) => e == '');
   }
 
   bool _isWinning(String symbol) {
@@ -93,9 +94,9 @@ class AiGameProvider extends ChangeNotifier {
       [2, 4, 6],
     ];
     for (var pattern in winPatterns) {
-      if (displayOX[pattern[0]] == symbol &&
-          displayOX[pattern[1]] == symbol &&
-          displayOX[pattern[2]] == symbol) {
+      if (board[pattern[0]] == symbol &&
+          board[pattern[1]] == symbol &&
+          board[pattern[2]] == symbol) {
         return true;
       }
     }
@@ -116,23 +117,23 @@ class AiGameProvider extends ChangeNotifier {
 
     for (var pattern in winPatterns) {
       final a = pattern[0], b = pattern[1], c = pattern[2];
-      if (displayOX[a] != '' && displayOX[a] == displayOX[b] && displayOX[b] == displayOX[c]) {
+      if (board[a] != '' && board[a] == board[b] && board[b] == board[c]) {
         matchColor = pattern;
         gameOver = true;
         showWinDialog = true;
 
-        if (displayOX[a] == 'X') {
+        if (board[a] == 'X') {
           playerScore++;
           resultMessage = "$playerName Wins!";
         } else {
           aiScore++;
-          resultMessage = "AI Wins!";
+          resultMessage = "Computer Wins!";
         }
         return;
       }
     }
 
-    if (!displayOX.contains('')) {
+    if (!board.contains('')) {
       resultMessage = "It's a Draw!";
       gameOver = true;
       showWinDialog = true;
@@ -140,7 +141,7 @@ class AiGameProvider extends ChangeNotifier {
   }
 
   void resetGame() {
-    displayOX = List.filled(9, '');
+    board = List.filled(9, '');
     gameOver = false;
     resultMessage = '';
     playerTurn = true;

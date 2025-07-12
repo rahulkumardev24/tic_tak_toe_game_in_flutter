@@ -9,21 +9,18 @@ import '../widgets/score_board_card.dart';
 import '../provider/ai_game_provider.dart';
 
 class AiGameScreen extends StatefulWidget {
-  final String playerName;
-
-  const AiGameScreen({super.key, required this.playerName});
+  const AiGameScreen({super.key});
 
   @override
   State<AiGameScreen> createState() => _AiGameScreenState();
 }
 
-class _AiGameScreenState extends State<AiGameScreen>
-    with SingleTickerProviderStateMixin {
+class _AiGameScreenState extends State<AiGameScreen> with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _animation;
 
-  final Color playerColor = Colors.blueAccent;
-  final Color aiColor = Colors.redAccent;
+  final Color playerColor = AppColors.xColor;
+  final Color aiColor = AppColors.oColor;
 
   @override
   void initState() {
@@ -37,12 +34,6 @@ class _AiGameScreenState extends State<AiGameScreen>
       curve: Curves.easeInOut,
     );
     _animationController.repeat(reverse: true);
-
-    // Initialize player name in provider
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final provider = Provider.of<AiGameProvider>(context, listen: false);
-      provider.setPlayerName(widget.playerName);
-    });
   }
 
   @override
@@ -69,16 +60,16 @@ class _AiGameScreenState extends State<AiGameScreen>
                         playerSecond: "Computer",
                         firstSymbol: "X",
                         secondSymbol: "O",
-                        firstScore: provider.aiScore,
-                        secondScore: provider.playerScore,
+                        firstScore: provider.playerScore,
+                        secondScore: provider.aiScore,
                         isFirstTurn: provider.playerTurn,
                         firstColor: AppColors.xColor,
                         secondColor: AppColors.oColor),
                     GameGrid(
-                        displayOX: provider.displayOX,
+                        displayOX: provider.board,
                         matchColor: provider.matchColor,
-                        oColor: playerColor,
-                        xColor: aiColor,
+                        oColor: aiColor,
+                        xColor: playerColor,
                         onTap: provider.makeMove),
                     _buildControlBar(provider),
                     const SizedBox(height: 20),
@@ -152,8 +143,8 @@ class _AiGameScreenState extends State<AiGameScreen>
             child: Text(
               provider.resultMessage.isEmpty
                   ? provider.playerTurn
-                      ? "${widget.playerName}'s Turn"
-                      : "AI is Thinking..."
+                  ? "${provider.playerName}'s Turn"
+                  : "AI is Thinking..."
                   : provider.resultMessage,
               style: GoogleFonts.poppins(
                 fontSize: 16,
@@ -173,6 +164,7 @@ class _AiGameScreenState extends State<AiGameScreen>
                   label: "Restart",
                   color: Colors.orangeAccent,
                   onPressed: provider.resetGame),
+              const SizedBox(width: 20),
               ControlButton(
                   icon: Icons.refresh,
                   label: "New Game",
@@ -186,8 +178,8 @@ class _AiGameScreenState extends State<AiGameScreen>
   }
 
   Color _getWinnerColor(AiGameProvider provider) {
-    if (provider.resultMessage.contains(widget.playerName)) return playerColor;
-    if (provider.resultMessage.contains("AI")) return aiColor;
+    if (provider.resultMessage.contains(provider.playerName)) return playerColor;
+    if (provider.resultMessage.contains("Computer")) return aiColor;
     return Colors.amber;
   }
 }

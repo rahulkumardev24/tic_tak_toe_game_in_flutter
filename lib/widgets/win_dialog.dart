@@ -97,14 +97,14 @@ class WinDialog extends StatelessWidget {
                         name: playerFirst,
                         symbol: "X",
                         score: xScore,
-                        isWinner: !isPlayerFirstWinner && !isDraw,
+                        isWinner: isPlayerFirstWinner && !isDraw,
                         color: xColor,
                       ),
                       _buildPlayerScore(
                         name: playerSecond,
                         symbol: "O",
                         score: oScore,
-                        isWinner: isPlayerFirstWinner && !isDraw,
+                        isWinner: !isPlayerFirstWinner && !isDraw,
                         color: oColor,
                       ),
                     ],
@@ -142,12 +142,13 @@ class WinDialog extends StatelessWidget {
     );
   }
 
-  Widget _buildPlayerScore(
-      {required String name,
-      required String symbol,
-      required int score,
-      required bool isWinner,
-      required Color color}) {
+  Widget _buildPlayerScore({
+    required String name,
+    required String symbol,
+    required int score,
+    required bool isWinner,
+    required Color color,
+  }) {
     return Column(
       children: [
         Container(
@@ -209,8 +210,8 @@ class WinDialog extends StatelessWidget {
 
   Widget _buildWinnerBadge() {
     final isPlayerFirstWinner = resultDeclaration.contains(playerFirst);
-    final winnerName = isPlayerFirstWinner ? playerSecond : playerFirst;
-    final color = isPlayerFirstWinner ? oColor : xColor;
+    final winnerName = isPlayerFirstWinner ? playerFirst : playerSecond;
+    final color = isPlayerFirstWinner ? xColor : oColor;
 
     return Column(
       children: [
@@ -276,8 +277,8 @@ class WinDialog extends StatelessWidget {
   }
 
   Color _getWinnerColor() {
-    if (resultDeclaration.contains(playerFirst)) return oColor;
-    if (resultDeclaration.contains(playerSecond)) return xColor;
+    if (resultDeclaration.contains(playerFirst)) return xColor;
+    if (resultDeclaration.contains(playerSecond)) return oColor;
     return Colors.amber;
   }
 }

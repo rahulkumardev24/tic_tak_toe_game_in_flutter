@@ -15,13 +15,12 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen>
-    with SingleTickerProviderStateMixin {
+class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _animation;
 
-  final Color oColor = Colors.greenAccent;
-  final Color xColor = Colors.orangeAccent;
+  final Color oColor = AppColors.oColor;
+  final Color xColor = AppColors.xColor;
 
   @override
   void initState() {
@@ -35,7 +34,6 @@ class _HomeScreenState extends State<HomeScreen>
       curve: Curves.easeInOut,
     );
     _animationController.repeat(reverse: true);
-
   }
 
   @override
@@ -63,8 +61,8 @@ class _HomeScreenState extends State<HomeScreen>
                         playerSecond: provider.playerSecond,
                         firstSymbol: "X",
                         secondSymbol: "O",
-                        firstScore: provider.oScore,
-                        secondScore: provider.xScore,
+                        firstScore: provider.xScore,
+                        secondScore: provider.oScore,
                         isFirstTurn: provider.oTurn,
                         firstColor: AppColors.xColor,
                         secondColor: AppColors.oColor),
@@ -79,8 +77,6 @@ class _HomeScreenState extends State<HomeScreen>
                     const SizedBox(height: 20),
                   ],
                 ),
-
-                /// dialog show
                 if (provider.showWinDialog)
                   WinDialog(
                     resultDeclaration: provider.resultDeclaration,
@@ -185,8 +181,8 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   Color _getWinnerColor(GameProvider provider) {
-    if (provider.resultDeclaration.contains(provider.playerFirst)) return oColor;
-    if (provider.resultDeclaration.contains(provider.playerSecond)) return xColor;
+    if (provider.resultDeclaration.contains(provider.playerFirst)) return xColor;
+    if (provider.resultDeclaration.contains(provider.playerSecond)) return oColor;
     return Colors.amber;
   }
 }
