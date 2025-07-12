@@ -122,19 +122,23 @@ class GameModeSelectionScreen extends StatelessWidget {
         const SizedBox(height: 24),
 
         // Play with AI Card
-        _buildGameModeCard(
-          context,
-          title: "Play With AI",
-          subtitle: "Test your skills against computer",
-          icon: Icons.smart_toy_rounded,
-          color: const Color(0xFF2196F3),
-          gradient: const LinearGradient(
-            colors: [Color(0xFF2196F3), Color(0xFF64B5F6)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          onTap: () => _navigateToGame(context, isAIMode: true),
-        ).animate().fadeIn(delay: 400.ms).slideX(begin: 0.2),
+        _buildGameModeCard(context,
+                title: "Play With AI",
+                subtitle: "Test your skills against computer",
+                icon: Icons.smart_toy_rounded,
+                color: const Color(0xFF2196F3),
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF2196F3), Color(0xFF64B5F6)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                onTap: () => Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => AiGameScreen(playerName: "You"))))
+            .animate()
+            .fadeIn(delay: 400.ms)
+            .slideX(begin: 0.2),
       ],
     );
   }
@@ -225,185 +229,6 @@ class GameModeSelectionScreen extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-
-  void _navigateToGame(BuildContext context, {required bool isAIMode}) {
-    Navigator.push(
-      context,
-      PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) =>
-            PlayerNameInputScreen(isAIMode: isAIMode),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          const begin = Offset(0.0, 1.0);
-          const end = Offset.zero;
-          const curve = Curves.easeInOutQuart;
-          var tween =
-              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-          return SlideTransition(
-            position: animation.drive(tween),
-            child: child,
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildSettingsOption({
-    required IconData icon,
-    required String title,
-    required bool value,
-    required Function(bool) onChanged,
-  }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: const Color(0xFF0F172A),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, color: Colors.white70),
-          const SizedBox(width: 12),
-          Text(
-            title,
-            style: GoogleFonts.poppins(
-              fontSize: 16,
-              color: Colors.white,
-            ),
-          ),
-          const Spacer(),
-          Switch(
-            value: value,
-            onChanged: onChanged,
-            activeColor: const Color(0xFF4CAF50),
-            activeTrackColor: const Color(0xFF4CAF50).withOpacity(0.5),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class PlayerNameInputScreen extends StatelessWidget {
-  final bool isAIMode;
-
-  const PlayerNameInputScreen({super.key, required this.isAIMode});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFF0F1923),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                isAIMode ? "Play Against AI" : "Play With Friends",
-                style: GoogleFonts.poppins(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ).animate().fadeIn(duration: 300.ms),
-              const SizedBox(height: 40),
-
-              // Player 1 Input
-              _buildPlayerInputField(
-                label: "Your Name",
-                icon: Icons.person,
-                color: const Color(0xFF4CAF50),
-              ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.2),
-              const SizedBox(height: 20),
-
-              // Player 2 Input (only for friend mode)
-              if (!isAIMode)
-                _buildPlayerInputField(
-                  label: "Friend's Name",
-                  icon: Icons.people,
-                  color: const Color(0xFF2196F3),
-                ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.2),
-              const SizedBox(height: 40),
-
-              // Start Game Button
-              ElevatedButton(
-                onPressed: () {
-                  // Start game logic
-                  Navigator.pushReplacement(
-                    context,
-                    PageRouteBuilder(
-                      pageBuilder: (context, animation, secondaryAnimation) =>
-                          isAIMode
-                              ? const AIGameScreen(playerName: "Player 1")
-                              : const HomeScreen("Player 1", "Player 2"),
-                      transitionsBuilder:
-                          (context, animation, secondaryAnimation, child) {
-                        return FadeTransition(
-                          opacity: animation,
-                          child: child,
-                        );
-                      },
-                    ),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFE53935),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 40,
-                    vertical: 16,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(50),
-                  ),
-                  elevation: 8,
-                  shadowColor: Colors.red.withOpacity(0.5),
-                ),
-                child: Text(
-                  "Start Game",
-                  style: GoogleFonts.poppins(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ).animate().fadeIn(delay: 600.ms),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPlayerInputField({
-    required String label,
-    required IconData icon,
-    required Color color,
-  }) {
-    return TextField(
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: GoogleFonts.poppins(color: Colors.white70),
-        prefixIcon: Icon(icon, color: color),
-        filled: true,
-        fillColor: const Color(0xFF1E293B),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15),
-          borderSide: BorderSide.none,
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15),
-          borderSide: BorderSide(
-            color: color,
-            width: 2,
-          ),
-        ),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 20,
-          vertical: 18,
-        ),
-      ),
-      style: GoogleFonts.poppins(color: Colors.white),
     );
   }
 }

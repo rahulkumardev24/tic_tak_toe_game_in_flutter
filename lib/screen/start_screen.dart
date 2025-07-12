@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:tic_tak_toe/colors.dart';
 import 'package:tic_tak_toe/screen/home_screen.dart';
 import 'package:tic_tak_toe/utils/custom_text_style.dart';
 import 'package:tic_tak_toe/widgets/my_text_button.dart';
 import 'package:velocity_x/velocity_x.dart';
+
+import '../provider/game_provider.dart';
 
 class StartScreen extends StatefulWidget {
   const StartScreen({super.key});
@@ -95,8 +98,8 @@ class _StartScreenState extends State<StartScreen> {
                               /// Player Input Section
                               _buildPlayerInput(
                                 controller: player1Controller,
-                                labelColor: AppColors.oColor,
-                                label: "Player 1 (O)",
+                                labelColor: AppColors.xColor,
+                                label: "Player 1 (X)",
                                 hint: "Enter name for Player 1",
                                 icon: Icons.person,
                                 iconColor: AppColors.cardLight,
@@ -104,8 +107,8 @@ class _StartScreenState extends State<StartScreen> {
                               const SizedBox(height: 20),
                               _buildPlayerInput(
                                 controller: player2Controller,
-                                labelColor: AppColors.xColor,
-                                label: "Player 2 (X)",
+                                labelColor: AppColors.oColor,
+                                label: "Player 2 (O)",
                                 hint: "Enter name for Player 2",
                                 icon: Icons.person,
                                 iconColor: AppColors.cardLight,
@@ -121,8 +124,15 @@ class _StartScreenState extends State<StartScreen> {
                                   final player2 = player2Controller.text.isEmpty
                                       ? "Player 2"
                                       : player2Controller.text;
-                                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>
-                                      HomeScreen(player1 , player2)));
+
+                                  // Set players in provider
+                                  final gameProvider = Provider.of<GameProvider>(context, listen: false);
+                                  gameProvider.setPlayers(player1, player2);
+
+                                  Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(builder: (_) => const HomeScreen())
+                                  );
                                 },
                                 backgroundColor: AppColors.card,
                                 btnText: "Game Start",

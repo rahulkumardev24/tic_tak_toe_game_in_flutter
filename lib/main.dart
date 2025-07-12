@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:tic_tak_toe/provider/ai_game_provider.dart';
+import 'package:tic_tak_toe/provider/game_provider.dart';
 import 'package:tic_tak_toe/provider/them_provider.dart';
 import 'package:tic_tak_toe/screen/ai_game_screen.dart';
 import 'package:tic_tak_toe/screen/game_mode_selection_screen.dart';
@@ -21,7 +23,9 @@ void main() {
 
   runApp(MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context)=> ThemProvider())
+        ChangeNotifierProvider(create: (context)=> ThemProvider()),
+        ChangeNotifierProvider(create: (context)=> GameProvider()),
+        ChangeNotifierProvider(create: (context)=> AiGameProvider()),
       ],
       child: const MyApp()));
 }
